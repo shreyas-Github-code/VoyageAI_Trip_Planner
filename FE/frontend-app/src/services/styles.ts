@@ -71,18 +71,72 @@ export const styles = `
     color: var(--amber-light);
     letter-spacing: -0.5px;
   }
+  .header-logo-button {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .header-logo-button:hover,
+  .header-logo-button:focus-visible {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    outline: none;
+  }
   .header-logo span { color: var(--white); font-style: normal; }
-  .header-steps { display: flex; gap: 8px; align-items: center; }
+  .header-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .header-nav-copy {
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .header-steps { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
   .step-pill {
-    padding: 4px 14px; border-radius: 20px;
+    padding: 6px 14px; border-radius: 20px;
     font-size: 0.72rem; font-weight: 500; letter-spacing: 0.5px;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    cursor: default;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
   }
   .step-pill.done   { background: var(--teal); color: white; }
   .step-pill.active { background: var(--amber); color: white; }
   .step-pill.todo   { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+  .step-pill.clickable {
+    cursor: pointer;
+  }
+  .step-pill.clickable:hover:not(:disabled),
+  .step-pill.clickable:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    outline: none;
+  }
+  .step-pill.locked {
+    cursor: not-allowed;
+  }
+  .step-pill:disabled {
+    opacity: 1;
+  }
+  .step-pill-index {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    background: rgba(255,255,255,0.18);
+    color: inherit;
+  }
 
   /* ── Ticker tape ── */
   .ticker {
@@ -424,15 +478,149 @@ export const styles = `
     color: var(--ink);
   }
   .section-subtitle { font-size: 0.85rem; color: var(--ink-light); font-weight: 300; }
+  .discover-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top left, rgba(232,168,85,0.14), transparent 32%),
+      linear-gradient(180deg, rgba(255,255,255,0.94), rgba(251,245,236,0.92));
+    box-shadow: 0 20px 40px rgba(49, 34, 20, 0.08);
+  }
+  .discover-topbar-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  .discover-topbar-label {
+    font-size: 0.68rem;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    color: rgba(61,52,40,0.52);
+    font-weight: 600;
+  }
+  .section-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 14px;
+    padding: 8px;
+    border-radius: 24px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.86), rgba(253,243,227,0.82));
+    border: 1px solid rgba(200, 135, 58, 0.16);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.72),
+      0 14px 30px rgba(49, 34, 20, 0.08);
+  }
+  .section-nav-compact {
+    margin-top: -2px;
+  }
+  .section-nav-discover {
+    margin-top: 0;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.72);
+    border-color: rgba(200, 135, 58, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      0 10px 24px rgba(49, 34, 20, 0.06);
+  }
+  .section-nav-btn {
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(61,52,40,0.7);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.79rem;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .section-nav-btn:hover,
+  .section-nav-btn:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(200, 135, 58, 0.18);
+    background: rgba(255,255,255,0.76);
+    color: var(--ink);
+    box-shadow: 0 10px 18px rgba(49, 34, 20, 0.08);
+    outline: none;
+  }
+  .section-nav-btn.active {
+    background:
+      linear-gradient(135deg, rgba(26,21,16,0.98), rgba(45,110,110,0.9));
+    color: var(--amber-light);
+    border-color: rgba(26,21,16,0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 12px 24px rgba(26,21,16,0.18);
+  }
 
   .route-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--ink); color: var(--amber-light);
-    padding: 8px 20px; border-radius: 2px;
-    font-size: 0.8rem; letter-spacing: 1px; font-weight: 500;
-    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.96rem;
+    letter-spacing: 0.2px;
+    font-weight: 600;
+    color: var(--ink);
   }
-  .route-badge span { color: rgba(255,255,255,0.5); }
+  .route-badge-origin,
+  .route-badge-destination {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.18rem;
+    letter-spacing: 0;
+  }
+  .route-badge-origin {
+    color: var(--ink);
+  }
+  .route-badge-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    background: rgba(18, 16, 26, 0.06);
+    color: rgba(61,52,40,0.58);
+    font-size: 0.92rem;
+  }
+  .route-badge-destination {
+    color: #9c6420;
+  }
+  .route-badge-separator {
+    color: rgba(61,52,40,0.28);
+    font-size: 1rem;
+  }
+  .route-badge-interests {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(67, 58, 200, 0.12);
+    color: rgba(156,100,32,0.92);
+    font-size: 0.76rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
 
   /* Highlights prose */
   .highlights-card {
@@ -1011,6 +1199,14 @@ export const styles = `
   }
 
   @media (max-width: 1024px) {
+    .discover-topbar {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 18px 20px;
+    }
+    .section-nav-discover {
+      width: 100%;
+    }
     .highlights-options-container {
       grid-template-columns: 1fr;
       gap: 32px;
@@ -1028,15 +1224,6 @@ export const styles = `
     .day-meta {
       justify-content: flex-start;
     }
-  }
-
-  .route-badge-destination {
-    color: var(--amber-light);
-  }
-
-  .route-badge-interests {
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: capitalize;
   }
 
   .button-actions {
@@ -1136,7 +1323,57 @@ export const styles = `
     .hero { padding: 48px 24px 56px; }
     .section { padding: 0 24px 60px; }
     .day-grid { grid-template-columns: 1fr; }
-    .header { padding: 0 20px; }
+    .header {
+      height: auto;
+      padding: 14px 20px;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .header-nav {
+      width: 100%;
+      align-items: flex-start;
+    }
+    .header-nav-copy {
+      font-size: 0.58rem;
+    }
+    .header-steps {
+      width: 100%;
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .section-nav {
+      width: 100%;
+      margin-top: 16px;
+      justify-content: stretch;
+      border-radius: 22px;
+      padding: 8px;
+    }
+    .discover-topbar {
+      gap: 16px;
+      padding: 18px;
+      border-radius: 24px;
+    }
+    .discover-topbar-copy {
+      width: 100%;
+    }
+    .route-badge {
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    .route-badge-origin,
+    .route-badge-destination {
+      font-size: 1.02rem;
+    }
+    .route-badge-arrow {
+      width: 28px;
+      height: 28px;
+    }
+    .section-nav-btn {
+      flex: 1 1 140px;
+      justify-content: center;
+    }
     .itinerary-hero { padding: 24px 20px; }
     .itinerary-summary-grid { grid-template-columns: 1fr; }
     .itinerary-route {

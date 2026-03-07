@@ -55,7 +55,11 @@ export default function TourGuide() {
   const [loadingMsg, setLoadingMsg] = useState<string>("Crafting your journey…");
   const [error, setError] = useState<string | null>(null);
 
+  const heroRef = useRef<HTMLDivElement>(null);
+  const discoverRef = useRef<HTMLDivElement>(null);
+  const selectRef = useRef<HTMLDivElement>(null);
   const itineraryRef = useRef<HTMLDivElement>(null);
+  const itineraryDaysRef = useRef<HTMLDivElement>(null);
   const activeInterestList = parseInterests(form.interests);
   const fromSuggestions = getMatchingSuggestions(form.from_location, CITY_SUGGESTIONS);
   const toSuggestions = getMatchingSuggestions(form.to_location, CITY_SUGGESTIONS);
@@ -162,7 +166,7 @@ export default function TourGuide() {
     });
   };
 
-  const stepIndex = step === 0 ? 0 : step === 1 ? 0 : step === 2 ? 1 : 3;
+  const stepIndex = step === 3 ? 3 : step === 2 ? (selected.size > 0 ? 2 : 1) : 0;
 
   const dayPlans = itinerary?.day_plans || [];
 
@@ -180,17 +184,70 @@ export default function TourGuide() {
     setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
   };
 
+  const scrollToSection = (target: HTMLDivElement | null) => {
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const canNavigateToStep = (index: number) => {
+    if (step === 1) return false;
+    if (index === 0) return true;
+    if (index === 1) return Boolean(highlights);
+    if (index === 2) return Boolean(options);
+    if (index === 3) return Boolean(itinerary);
+    return false;
+  };
+
+  const handleStepNavigation = (index: number) => {
+    if (!canNavigateToStep(index)) return;
+
+    if (index === 0) {
+      setStep(0);
+      setTimeout(() => scrollToSection(heroRef.current), 50);
+      return;
+    }
+
+    if (index === 1) {
+      setStep(2);
+      setTimeout(() => scrollToSection(discoverRef.current), 80);
+      return;
+    }
+
+    if (index === 2) {
+      setStep(2);
+      setTimeout(() => scrollToSection(selectRef.current), 80);
+      return;
+    }
+
+    if (index === 3) {
+      setStep(3);
+      setTimeout(() => scrollToSection(itineraryRef.current), 80);
+    }
+  };
+
   return (
     <div className={`app ${step === 2 ? "app-selection-mode" : ""}`}>
       {/* Header */}
       <header className="header">
-        <div className="header-logo">Voyage<span>AI</span></div>
-        <div className="header-steps">
-          {STEP_LABELS.map((l, i) => (
-            <span key={l} className={`step-pill ${i < stepIndex ? "done" : i === stepIndex ? "active" : "todo"}`}>
-              {i < stepIndex ? "✓ " : ""}{l}
-            </span>
-          ))}
+        <button type="button" className="header-logo header-logo-button" onClick={() => handleStepNavigation(0)}>
+          Voyage<span>AI</span>
+        </button>
+        <div className="header-nav">
+          <span className="header-nav-copy">Jump between steps</span>
+          <div className="header-steps">
+            {STEP_LABELS.map((l, i) => (
+              <button
+                key={l}
+                type="button"
+                className={`step-pill ${i < stepIndex ? "done" : i === stepIndex ? "active" : "todo"} ${canNavigateToStep(i) ? "clickable" : "locked"}`}
+                onClick={() => handleStepNavigation(i)}
+                disabled={!canNavigateToStep(i)}
+                aria-current={i === stepIndex ? "step" : undefined}
+              >
+                <span className="step-pill-index">{i < stepIndex ? "✓" : i + 1}</span>
+                <span>{l}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -202,7 +259,7 @@ export default function TourGuide() {
       {/* ── Step 0: Form ── */}
       {(step === 0 || step === 1) && (
         <>
-          <div className="hero">
+          <div className="hero" ref={heroRef}>
             <p className="hero-eyebrow">AI-Powered Travel Planning</p>
             <h1 className="hero-title">Your next great<br /><em>adventure</em> awaits</h1>
             <p className="hero-subtitle">
@@ -348,13 +405,35 @@ export default function TourGuide() {
       {/* ── Step 2: Highlights + Options ── */}
       {step === 2 && options && (
         <>
-          {/* Route badge */}
-          <div className="section section-no-bottom-pad">
-            <div className="route-badge">
-              <span>{form.from_location}</span>
-              <span>→</span>
-              <span className="route-badge-destination">{form.to_location}</span>
-              {form.interests && <><span>·</span><span className="route-badge-interests">{form.interests}</span></>}
+          <div className="section section-no-bottom-pad" ref={discoverRef}>
+            <div className="discover-topbar card">
+              <div className="discover-topbar-copy">
+                <span className="discover-topbar-label">Journey lens</span>
+                <div className="route-badge">
+                  <span className="route-badge-origin">{form.from_location}</span>
+                  <span className="route-badge-arrow">→</span>
+                  <span className="route-badge-destination">{form.to_location}</span>
+                  {form.interests && (
+                    <>
+                      <span className="route-badge-separator">·</span>
+                      <span className="route-badge-interests">{form.interests}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="section-nav section-nav-discover" role="navigation" aria-label="Discover sections">
+                <button type="button" className="section-nav-btn active" onClick={() => scrollToSection(discoverRef.current)}>
+                  Highlights
+                </button>
+                <button type="button" className="section-nav-btn" onClick={() => scrollToSection(selectRef.current)}>
+                  Place Options
+                </button>
+                {itinerary && (
+                  <button type="button" className="section-nav-btn" onClick={() => handleStepNavigation(3)}>
+                    Itinerary
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -372,7 +451,7 @@ export default function TourGuide() {
             )}
 
             {/* Right: Place Options */}
-            <div className="options-column">
+            <div className="options-column" ref={selectRef}>
               <div className="section-header">
                 <h2 className="section-title">Select Places</h2>
                 <span className="section-subtitle">Tap to add to your itinerary</span>
@@ -532,7 +611,19 @@ export default function TourGuide() {
                 </div>
               </div>
 
-              <div className="itinerary-days">
+              <div className="section-nav section-nav-compact" role="navigation" aria-label="Itinerary sections">
+                <button type="button" className="section-nav-btn active" onClick={() => scrollToSection(itineraryRef.current)}>
+                  Overview
+                </button>
+                <button type="button" className="section-nav-btn" onClick={() => scrollToSection(itineraryDaysRef.current)}>
+                  Day Plans
+                </button>
+                <button type="button" className="section-nav-btn" onClick={backToSelection}>
+                  Back to Places
+                </button>
+              </div>
+
+              <div className="itinerary-days" ref={itineraryDaysRef}>
               <span className="section-subtitle">{itinerary.num_days}-day journey · {itinerary.from_location} → {itinerary.to_location}</span>
                 {dayPlans.map((day: any, i: number) => (
               <div className="day-card card" key={day.day} style={{ animationDelay: `${i * 0.1}s` }}>

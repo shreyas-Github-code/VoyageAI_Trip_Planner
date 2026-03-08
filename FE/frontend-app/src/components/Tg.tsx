@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { clampDays, getCurrentInterestQuery, getMatchingSuggestions, getTransportIcon, parseInterests, replaceInterestQuery } from "../services/utils";
+import type { ItineraryResponse } from "../services/api";
+import { saveLastItinerary } from "../services/history";
 import { styles } from "../services/styles";
 import { CITY_SUGGESTIONS, DAY_OPTIONS, INTEREST_SUGGESTIONS, STEP_LABELS } from "../helpers/helpers";
 
@@ -43,6 +46,7 @@ export const Spinner = ({ text = "Crafting your journey…" }) => (
 
 // ── Main App ────────────────────────────────────────────────────────────────
 export default function TourGuide() {
+  const navigate = useNavigate();
   const [step, setStep] = useState<number>(0); // 0=form, 1=loading, 2=highlights+options, 3=itinerary
 
   const [form, setForm] = useState({ from_location: "", to_location: "", interests: "" });
@@ -50,7 +54,7 @@ export default function TourGuide() {
   const [options, setOptions] = useState<any>(null);
   const [selected, setSelected] = useState(new Set<string>());
   const [numDays, setNumDays] = useState<number>(3);
-  const [itinerary, setItinerary] = useState<any>(null);
+  const [itinerary, setItinerary] = useState<ItineraryResponse | null>(null);
   const [openSuggestions, setOpenSuggestions] = useState<"from" | "to" | "interests" | null>(null);
   const [loadingMsg, setLoadingMsg] = useState<string>("Crafting your journey…");
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +79,10 @@ export default function TourGuide() {
   const handleExplore = async () => {
     if (!form.from_location.trim() || !form.to_location.trim()) {
       setError("Please fill in both From and To locations.");
+      return;
+    }
+    if (form.from_location.trim().toLowerCase() === form.to_location.trim().toLowerCase()) {
+      setError("From and To locations cannot be the same city.");
       return;
     }
     setStep(1);
@@ -119,6 +127,10 @@ export default function TourGuide() {
 
   const handleItinerary = async () => {
     if (selected.size === 0) { setError("Select at least one place."); return; }
+    if (form.from_location.trim().toLowerCase() === form.to_location.trim().toLowerCase()) {
+      setError("From and To locations cannot be the same city.");
+      return;
+    }
     setLoadingMsg("Mapping your perfect itinerary…");
     setStep(1);
     try {
@@ -133,7 +145,13 @@ export default function TourGuide() {
         }),
       });
       if (!res.ok) throw new Error("API error");
-      const data = await res.json();
+      const data: ItineraryResponse = await res.json();
+      saveLastItinerary({
+        ...data,
+        interests: form.interests || "general sightseeing",
+        selected_places: [...selected],
+        saved_at: new Date().toISOString(),
+      });
       setItinerary(data);
       setStep(3);
       setTimeout(() => itineraryRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
@@ -232,7 +250,6 @@ export default function TourGuide() {
           Voyage<span>AI</span>
         </button>
         <div className="header-nav">
-          <span className="header-nav-copy">Jump between steps</span>
           <div className="header-steps">
             {STEP_LABELS.map((l, i) => (
               <button
@@ -248,6 +265,11 @@ export default function TourGuide() {
               </button>
             ))}
           </div>
+        </div>
+        <div className="header-actions">
+          <button type="button" className="header-action-link" onClick={() => navigate("/history")}>
+            Saved History
+          </button>
         </div>
       </header>
 
@@ -623,6 +645,13 @@ export default function TourGuide() {
                 </button>
               </div>
 
+              <div className="history-note-card card">
+                <span className="history-note-badge">Local only</span>
+                <p>
+                  The latest itinerary is saved only in this browser local storage. It is not stored in the backend or any database.
+                </p>
+              </div>
+
               <div className="itinerary-days" ref={itineraryDaysRef}>
               <span className="section-subtitle">{itinerary.num_days}-day journey · {itinerary.from_location} → {itinerary.to_location}</span>
                 {dayPlans.map((day: any, i: number) => (
@@ -687,6 +716,9 @@ export default function TourGuide() {
               </div>
 
             <div className="itinerary-actions">
+              <button className="btn btn-secondary" onClick={() => navigate("/history")}>
+                View Saved History
+              </button>
               <button className="btn btn-secondary" onClick={backToSelection}>
                 ← Back to Selection
               </button>

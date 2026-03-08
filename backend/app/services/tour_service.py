@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+import datetime
 import json
 import logging
 
 from groq import Groq
-from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.models import Tour, TourItinerary, TourOption
 from app.schemas.tour import ItineraryRequest, TourRequest
 
 logger = logging.getLogger(__name__)
@@ -17,8 +16,8 @@ class TourServiceError(Exception):
     pass
 
 
-class TourNotFoundError(TourServiceError):
-    pass
+def _now_utc() -> datetime.datetime:
+    return datetime.datetime.now(datetime.timezone.utc)
 
 
 def _normalize_location(value: str, field_name: str) -> str:
@@ -26,6 +25,11 @@ def _normalize_location(value: str, field_name: str) -> str:
     if not cleaned_value:
         raise ValueError(f"{field_name} cannot be empty")
     return cleaned_value
+
+
+def _ensure_distinct_locations(from_location: str, to_location: str) -> None:
+    if from_location.casefold() == to_location.casefold():
+        raise ValueError("From and To locations cannot be the same city")
 
 
 def _get_client() -> Groq:
@@ -153,10 +157,14 @@ Ensure:
 Return ONLY the JSON object, no extra text."""
 
 
-def create_tour(db: Session, request: TourRequest) -> Tour:
+def create_tour(request: TourRequest) -> dict:
+    from_location = _normalize_location(request.from_location, "From location")
+    to_location = _normalize_location(request.to_location, "To location")
+    _ensure_distinct_locations(from_location, to_location)
+
     normalized_request = TourRequest(
-        from_location=_normalize_location(request.from_location, "From location"),
-        to_location=_normalize_location(request.to_location, "To location"),
+        from_location=from_location,
+        to_location=to_location,
         interests=request.interests.strip() or "general sightseeing",
     )
     suggestions = _generate_completion(
@@ -165,22 +173,23 @@ def create_tour(db: Session, request: TourRequest) -> Tour:
         max_tokens=2048,
     )
 
-    tour = Tour(
-        from_location=normalized_request.from_location,
-        to_location=normalized_request.to_location,
-        interests=normalized_request.interests,
-        suggestions=suggestions,
-    )
-    db.add(tour)
-    db.commit()
-    db.refresh(tour)
-    return tour
+    return {
+        "from_location": normalized_request.from_location,
+        "to_location": normalized_request.to_location,
+        "interests": normalized_request.interests,
+        "suggestions": suggestions,
+        "created_at": _now_utc(),
+    }
 
 
-def create_tour_options(db: Session, request: TourRequest) -> dict:
+def create_tour_options(request: TourRequest) -> dict:
+    from_location = _normalize_location(request.from_location, "From location")
+    to_location = _normalize_location(request.to_location, "To location")
+    _ensure_distinct_locations(from_location, to_location)
+
     normalized_request = TourRequest(
-        from_location=_normalize_location(request.from_location, "From location"),
-        to_location=_normalize_location(request.to_location, "To location"),
+        from_location=from_location,
+        to_location=to_location,
         interests=request.interests.strip() or "general sightseeing",
     )
     response_text = _generate_completion(
@@ -190,30 +199,24 @@ def create_tour_options(db: Session, request: TourRequest) -> dict:
     )
     options_data = _extract_json_object(response_text)
 
-    tour_option = TourOption(
-        from_location=normalized_request.from_location,
-        to_location=normalized_request.to_location,
-        options_json=json.dumps(options_data),
-    )
-    db.add(tour_option)
-    db.commit()
-    db.refresh(tour_option)
-
     return {
-        "id": tour_option.id,
-        "from_location": tour_option.from_location,
-        "to_location": tour_option.to_location,
+        "from_location": normalized_request.from_location,
+        "to_location": normalized_request.to_location,
         "low_priority": options_data.get("low_priority", []),
         "mid_priority": options_data.get("mid_priority", []),
         "high_priority": options_data.get("high_priority", []),
-        "created_at": tour_option.created_at,
+        "created_at": _now_utc(),
     }
 
 
-def create_itinerary(db: Session, request: ItineraryRequest) -> dict:
+def create_itinerary(request: ItineraryRequest) -> dict:
+    from_location = _normalize_location(request.from_location, "From location")
+    to_location = _normalize_location(request.to_location, "To location")
+    _ensure_distinct_locations(from_location, to_location)
+
     normalized_request = ItineraryRequest(
-        from_location=_normalize_location(request.from_location, "From location"),
-        to_location=_normalize_location(request.to_location, "To location"),
+        from_location=from_location,
+        to_location=to_location,
         num_days=request.num_days,
         selected_places=[
             place.strip() for place in request.selected_places if place.strip()
@@ -229,63 +232,10 @@ def create_itinerary(db: Session, request: ItineraryRequest) -> dict:
     )
     itinerary_data = _extract_json_object(response_text)
 
-    itinerary = TourItinerary(
-        from_location=normalized_request.from_location,
-        to_location=normalized_request.to_location,
-        num_days=normalized_request.num_days,
-        selected_places=", ".join(normalized_request.selected_places),
-        itinerary_plan=json.dumps(itinerary_data),
-    )
-    db.add(itinerary)
-    db.commit()
-    db.refresh(itinerary)
-
     return {
-        "id": itinerary.id,
-        "from_location": itinerary.from_location,
-        "to_location": itinerary.to_location,
-        "num_days": itinerary.num_days,
+        "from_location": normalized_request.from_location,
+        "to_location": normalized_request.to_location,
+        "num_days": normalized_request.num_days,
         "day_plans": itinerary_data.get("itinerary", []),
-        "created_at": itinerary.created_at,
-    }
-
-
-def get_tour_history(db: Session) -> list[Tour]:
-    return db.query(Tour).order_by(Tour.created_at.desc()).limit(50).all()
-
-
-def get_tour_by_id(db: Session, tour_id: int) -> Tour:
-    tour = db.query(Tour).filter(Tour.id == tour_id).first()
-    if not tour:
-        raise TourNotFoundError("Tour not found")
-    return tour
-
-
-def get_tour_options_by_id(db: Session, option_id: int) -> dict:
-    tour_option = db.query(TourOption).filter(TourOption.id == option_id).first()
-    if not tour_option:
-        raise TourNotFoundError("Tour options not found")
-
-    return {
-        "id": tour_option.id,
-        "from_location": tour_option.from_location,
-        "to_location": tour_option.to_location,
-        "options": json.loads(tour_option.options_json),
-        "created_at": tour_option.created_at,
-    }
-
-
-def get_itinerary_by_id(db: Session, itinerary_id: int) -> dict:
-    itinerary = db.query(TourItinerary).filter(TourItinerary.id == itinerary_id).first()
-    if not itinerary:
-        raise TourNotFoundError("Tour itinerary not found")
-
-    return {
-        "id": itinerary.id,
-        "from_location": itinerary.from_location,
-        "to_location": itinerary.to_location,
-        "num_days": itinerary.num_days,
-        "selected_places": itinerary.selected_places,
-        "itinerary": json.loads(itinerary.itinerary_plan),
-        "created_at": itinerary.created_at,
+        "created_at": _now_utc(),
     }

@@ -1,10 +1,8 @@
 from .tour import (
     DayPlan,
-    ItineraryDetailResponse,
     ItineraryRequest,
     ItineraryResponse,
     OptionPlace,
-    TourOptionsDetailResponse,
     TourOptionsResponse,
     TourRequest,
     TourResponse,
@@ -12,11 +10,9 @@ from .tour import (
 
 __all__ = [
     "DayPlan",
-    "ItineraryDetailResponse",
     "ItineraryRequest",
     "ItineraryResponse",
     "OptionPlace",
-    "TourOptionsDetailResponse",
     "TourOptionsResponse",
     "TourRequest",
     "TourResponse",

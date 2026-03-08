@@ -27,7 +27,6 @@ export interface OptionPlace {
 }
 
 export interface TourResponse {
-  id: number;
   from_location: string;
   to_location: string;
   interests: string;
@@ -36,7 +35,6 @@ export interface TourResponse {
 }
 
 export interface TourOptionsResponse {
-  id: number;
   from_location: string;
   to_location: string;
   low_priority: OptionPlace[];
@@ -61,7 +59,6 @@ export interface ItineraryRequest {
 }
 
 export interface ItineraryResponse {
-  id: number;
   from_location: string;
   to_location: string;
   num_days: number;

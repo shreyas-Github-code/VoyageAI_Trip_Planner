@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
 
 
 class TourRequest(BaseModel):
@@ -12,9 +12,6 @@ class TourRequest(BaseModel):
 
 
 class TourResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
     from_location: str
     to_location: str
     interests: str
@@ -31,20 +28,11 @@ class OptionPlace(BaseModel):
 
 
 class TourOptionsResponse(BaseModel):
-    id: int
     from_location: str
     to_location: str
     low_priority: list[OptionPlace]
     mid_priority: list[OptionPlace]
     high_priority: list[OptionPlace]
-    created_at: datetime.datetime
-
-
-class TourOptionsDetailResponse(BaseModel):
-    id: int
-    from_location: str
-    to_location: str
-    options: dict[str, list[OptionPlace]]
     created_at: datetime.datetime
 
 
@@ -64,19 +52,8 @@ class DayPlan(BaseModel):
 
 
 class ItineraryResponse(BaseModel):
-    id: int
     from_location: str
     to_location: str
     num_days: int
     day_plans: list[DayPlan]
-    created_at: datetime.datetime
-
-
-class ItineraryDetailResponse(BaseModel):
-    id: int
-    from_location: str
-    to_location: str
-    num_days: int
-    selected_places: str
-    itinerary: dict[str, list[DayPlan]]
     created_at: datetime.datetime

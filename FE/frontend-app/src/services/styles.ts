@@ -1258,6 +1258,164 @@ export const styles = `
     gap: 32px;
   }
 
+  @media (max-width: 900px) {
+    .header {
+      grid-template-columns: auto auto;
+      grid-template-areas:
+        'logo actions'
+        'steps steps';
+      gap: 10px;
+      padding: 12px 16px 14px;
+    }
+    .header-logo {
+      grid-area: logo;
+    }
+    .header-nav {
+      grid-area: steps;
+      width: 100%;
+      justify-content: flex-start;
+    }
+    .header-actions {
+      grid-area: actions;
+      justify-content: flex-end;
+    }
+    .header-steps {
+      width: 100%;
+      justify-content: flex-start;
+      border-radius: 18px;
+    }
+    .hero {
+      padding: 56px 24px 64px;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+    }
+    .form-card {
+      margin: 0 24px 64px;
+      padding: 28px 24px;
+    }
+    .form-grid {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .form-arrow {
+      width: 100%;
+      height: 56px;
+      font-size: 1.15rem;
+    }
+    .form-arrow::before,
+    .form-arrow::after {
+      width: 26%;
+    }
+    .form-footer {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .form-footer::before {
+      max-width: none;
+    }
+    .form-footer .btn {
+      width: 100%;
+    }
+    .section {
+      padding: 0 24px 64px;
+    }
+    .discover-topbar {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .discover-topbar-copy,
+    .section-nav-discover {
+      width: 100%;
+    }
+    .route-badge {
+      gap: 8px;
+    }
+    .route-badge-origin,
+    .route-badge-destination {
+      font-size: 1.06rem;
+    }
+    .highlights-options-container {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding: 0 24px;
+    }
+    .places-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .priority-header {
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .selection-bar {
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      padding: 14px 16px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+    .selection-bar-empty {
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+    }
+    .selection-bar-left {
+      align-items: stretch;
+      gap: 12px;
+    }
+    .selection-summary {
+      justify-content: space-between;
+    }
+    .days-picker {
+      width: 100%;
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .days-controls,
+    .days-pills,
+    .button-actions {
+      width: 100%;
+    }
+    .button-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .itinerary-hero {
+      padding: 26px 22px;
+    }
+    .itinerary-hero-main {
+      flex-direction: column;
+    }
+    .itinerary-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .day-header {
+      flex-direction: column;
+      gap: 18px;
+    }
+    .day-meta {
+      justify-content: flex-start;
+    }
+    .history-top,
+    .history-empty,
+    .history-toolbar,
+    .history-selected-places {
+      padding: 24px 20px;
+    }
+    .history-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    .history-toolbar-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+  }
+
   @media (max-width: 1024px) {
     .discover-topbar {
       flex-direction: column;
@@ -1454,12 +1612,9 @@ export const styles = `
 
   /* ── Responsive ── */
   @media (max-width: 680px) {
-    .form-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
     .form-card {
-      padding: 28px 20px;
+      margin: 0 16px 56px;
+      padding: 24px 18px;
       border-radius: 24px;
     }
     .form-card::after {
@@ -1468,56 +1623,62 @@ export const styles = `
       margin-bottom: 18px;
     }
     .form-group {
-      padding: 18px;
+      padding: 16px;
     }
     .form-group.full {
       padding-top: 20px;
     }
     .form-arrow {
-      width: 100%;
-      height: 52px;
-      font-size: 1.2rem;
+      height: 50px;
+      font-size: 1.05rem;
     }
     .form-arrow::before,
     .form-arrow::after {
-      width: 24%;
+      width: 22%;
     }
-    .form-footer {
-      flex-direction: column;
-      align-items: stretch;
+    .hero {
+      padding: 42px 18px 52px;
     }
-    .form-footer::before {
-      max-width: none;
+    .hero-eyebrow {
+      letter-spacing: 3px;
+      margin-bottom: 12px;
     }
-    .form-footer .btn {
-      width: 100%;
+    .hero-title {
+      font-size: clamp(2.4rem, 12vw, 3.3rem);
+      margin-bottom: 16px;
     }
-    .hero { padding: 48px 24px 56px; }
-    .section { padding: 0 24px 60px; }
+    .hero-subtitle {
+      font-size: 0.96rem;
+    }
+    .section {
+      padding: 0 18px 56px;
+    }
     .day-grid { grid-template-columns: 1fr; }
     .header {
-      min-height: auto;
-      padding: 12px 12px 14px;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+      padding: 10px 12px 12px;
     }
-    .header-nav {
-      width: 100%;
-      gap: 8px;
+    .header-logo {
+      font-size: 1.3rem;
     }
-    .header-actions {
-      order: 2;
+    .header-action-link {
+      min-height: 32px;
+      padding: 0 12px;
+      font-size: 0.64rem;
     }
     .header-steps {
-      order: 1;
-      width: 100%;
-      justify-content: flex-start;
       border-radius: 16px;
-      padding: 8px;
+      padding: 6px;
     }
     .step-pill {
-      min-height: 38px;
+      min-height: 34px;
+      padding: 0 10px;
+      font-size: 0.62rem;
+      gap: 5px;
+    }
+    .step-pill-index {
+      width: 17px;
+      height: 17px;
+      font-size: 0.58rem;
     }
     .section-nav {
       width: 100%;
@@ -1527,28 +1688,54 @@ export const styles = `
       padding: 8px;
     }
     .discover-topbar {
-      gap: 16px;
-      padding: 18px;
-      border-radius: 24px;
-    }
-    .discover-topbar-copy {
-      width: 100%;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 20px;
     }
     .route-badge {
       gap: 8px;
-      font-size: 0.9rem;
+      font-size: 0.84rem;
     }
     .route-badge-origin,
     .route-badge-destination {
-      font-size: 1.02rem;
+      font-size: 0.98rem;
     }
     .route-badge-arrow {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
+      font-size: 0.82rem;
+    }
+    .route-badge-interests {
+      width: 100%;
+      justify-content: center;
+      padding: 8px 12px;
     }
     .section-nav-btn {
-      flex: 1 1 140px;
+      flex: 1 1 100%;
       justify-content: center;
+      width: 100%;
+    }
+    .highlights-options-container {
+      padding: 0 18px;
+      gap: 24px;
+    }
+    .highlights-card {
+      padding: 24px 20px;
+      font-size: 0.92rem;
+      line-height: 1.75;
+    }
+    .options-sections-wrapper {
+      gap: 24px;
+    }
+    .places-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .place-card {
+      padding: 18px 18px 16px;
+    }
+    .place-name {
+      font-size: 1rem;
     }
     .itinerary-hero { padding: 24px 20px; }
     .itinerary-summary-grid { grid-template-columns: 1fr; }
@@ -1560,15 +1747,15 @@ export const styles = `
     .day-header,
     .day-body,
     .day-place-strip {
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 16px;
+      padding-right: 16px;
     }
     .day-identity {
       flex-direction: column;
       width: 100%;
     }
     .day-badge {
-      min-width: 72px;
+      min-width: 68px;
     }
     .itinerary-actions {
       flex-direction: column;
@@ -1598,33 +1785,69 @@ export const styles = `
     }
     .selection-bar {
       padding: 12px 14px;
-      align-items: stretch;
-      flex-direction: column;
       gap: 14px;
+      border-radius: 18px;
     }
     .selection-bar-left {
-      align-items: stretch;
+      flex-direction: column;
       gap: 12px;
     }
     .selection-summary {
-      justify-content: space-between;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
     }
     .days-picker {
       width: 100%;
-      align-items: flex-start;
+      align-items: stretch;
       flex-direction: column;
+      padding: 10px 12px;
+      gap: 10px;
     }
     .days-label-group {
       min-width: auto;
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      width: 100%;
     }
     .days-controls,
     .days-pills,
     .button-actions {
       width: 100%;
     }
+    .days-controls {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) 38px;
+      align-items: center;
+      gap: 8px;
+    }
+    .days-stepper {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+    }
+    .days-pills {
+      flex-wrap: nowrap;
+      justify-content: center;
+      gap: 6px;
+    }
+    .days-pill {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 9px;
+      font-size: 0.78rem;
+    }
     .button-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .button-actions .btn {
+      min-width: 0;
+      padding-left: 14px;
+      padding-right: 14px;
+      font-size: 0.74rem;
     }
   }
 

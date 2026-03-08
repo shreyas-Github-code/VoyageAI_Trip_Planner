@@ -6,7 +6,7 @@ import { saveLastItinerary } from "../services/history";
 import { styles } from "../services/styles";
 import { CITY_SUGGESTIONS, DAY_OPTIONS, INTEREST_SUGGESTIONS, STEP_LABELS } from "../helpers/helpers";
 
-const API = "http://localhost:8000";
+const API = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/$/, "");
 
 // ── Fonts ──────────────────────────────────────────────────────────────────
 const fontLink = document.createElement("link");

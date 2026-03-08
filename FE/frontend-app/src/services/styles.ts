@@ -1614,71 +1614,137 @@ export const styles = `
   @media (max-width: 680px) {
     .form-card {
       margin: 0 16px 56px;
-      padding: 24px 18px;
-      border-radius: 24px;
+      padding: 20px 14px 22px;
+      border-radius: 22px;
     }
     .form-card::after {
-      position: static;
-      display: inline-flex;
-      margin-bottom: 18px;
+      display: none;
     }
     .form-group {
-      padding: 16px;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 18px;
+    }
+    .form-grid > .form-group:nth-child(1)::before,
+    .form-grid > .form-group:nth-child(3)::before,
+    .form-group.full::before {
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      font-size: 0.62rem;
     }
     .form-group.full {
-      padding-top: 20px;
+      padding-top: 18px;
+    }
+    .form-label {
+      font-size: 0.6rem;
+      letter-spacing: 1.7px;
+    }
+    .form-input {
+      min-height: 50px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+    }
+    .form-helper {
+      font-size: 0.74rem;
+      line-height: 1.45;
+    }
+    .suggestion-list {
+      gap: 4px;
+      padding: 8px;
+      border-radius: 10px;
+    }
+    .suggestion-item {
+      padding: 10px 10px;
+      font-size: 0.88rem;
+    }
+    .interest-chip-row {
+      gap: 8px;
+    }
+    .interest-chip {
+      padding: 8px 11px;
+      font-size: 0.72rem;
     }
     .form-arrow {
-      height: 50px;
-      font-size: 1.05rem;
+      height: 36px;
+      font-size: 0.9rem;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      border: none;
     }
     .form-arrow::before,
     .form-arrow::after {
-      width: 22%;
+      width: 34%;
+      top: 50%;
+      transform: translateY(-50%);
     }
     .hero {
-      padding: 42px 18px 52px;
+      padding: 28px 18px 36px;
     }
     .hero-eyebrow {
-      letter-spacing: 3px;
-      margin-bottom: 12px;
+      font-size: 0.62rem;
+      letter-spacing: 2.6px;
+      margin-bottom: 10px;
     }
     .hero-title {
-      font-size: clamp(2.4rem, 12vw, 3.3rem);
-      margin-bottom: 16px;
+      font-size: clamp(2.2rem, 11vw, 3.05rem);
+      line-height: 0.93;
+      margin-bottom: 14px;
     }
     .hero-subtitle {
-      font-size: 0.96rem;
+      max-width: 320px;
+      font-size: 0.9rem;
+      line-height: 1.55;
     }
     .section {
       padding: 0 18px 56px;
     }
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+    }
+    .section-title {
+      font-size: 1.7rem;
+      line-height: 1.05;
+    }
+    .section-subtitle {
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
     .day-grid { grid-template-columns: 1fr; }
     .header {
-      padding: 10px 12px 12px;
+      padding: 10px 10px 12px;
     }
     .header-logo {
-      font-size: 1.3rem;
+      font-size: 1.22rem;
     }
     .header-action-link {
-      min-height: 32px;
-      padding: 0 12px;
-      font-size: 0.64rem;
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 0.6rem;
+      letter-spacing: 0.9px;
     }
     .header-steps {
       border-radius: 16px;
-      padding: 6px;
+      padding: 5px;
     }
     .step-pill {
-      min-height: 34px;
-      padding: 0 10px;
-      font-size: 0.62rem;
-      gap: 5px;
+      min-height: 32px;
+      padding: 0 9px;
+      font-size: 0.58rem;
+      gap: 4px;
     }
     .step-pill-index {
-      width: 17px;
-      height: 17px;
-      font-size: 0.58rem;
+      width: 16px;
+      height: 16px;
+      font-size: 0.54rem;
     }
     .section-nav {
       width: 100%;
@@ -1691,6 +1757,11 @@ export const styles = `
       gap: 14px;
       padding: 16px;
       border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .discover-topbar-label {
+      font-size: 0.62rem;
+      letter-spacing: 2.2px;
     }
     .route-badge {
       gap: 8px;
@@ -1714,6 +1785,9 @@ export const styles = `
       flex: 1 1 100%;
       justify-content: center;
       width: 100%;
+      min-height: 38px;
+      padding: 8px 12px;
+      font-size: 0.73rem;
     }
     .highlights-options-container {
       padding: 0 18px;
@@ -1723,9 +1797,22 @@ export const styles = `
       padding: 24px 20px;
       font-size: 0.92rem;
       line-height: 1.75;
+      border-radius: 20px;
     }
     .options-sections-wrapper {
       gap: 24px;
+    }
+    .priority-section {
+      margin-bottom: 24px;
+    }
+    .priority-header {
+      gap: 8px;
+      margin-bottom: 14px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .priority-count {
+      font-size: 0.76rem;
     }
     .places-grid {
       grid-template-columns: 1fr;
@@ -1733,16 +1820,87 @@ export const styles = `
     }
     .place-card {
       padding: 18px 18px 16px;
+      border-radius: 18px;
     }
     .place-name {
       font-size: 1rem;
     }
-    .itinerary-hero { padding: 24px 20px; }
-    .itinerary-summary-grid { grid-template-columns: 1fr; }
+    .place-desc {
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .place-meta {
+      gap: 8px;
+    }
+    .place-tag,
+    .place-time {
+      font-size: 0.62rem;
+      padding: 4px 8px;
+    }
+    .section-itinerary {
+      padding-top: 28px;
+    }
+    .itinerary-shell {
+      gap: 20px;
+    }
+    .itinerary-hero {
+      padding: 20px 16px;
+      border-radius: 22px;
+    }
+    .itinerary-eyebrow {
+      margin-bottom: 10px;
+      font-size: 0.64rem;
+      letter-spacing: 2.4px;
+    }
+    .itinerary-hero .section-title {
+      margin-bottom: 8px;
+      font-size: 2.35rem;
+      line-height: 0.95;
+    }
+    .itinerary-hero-text {
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+    .itinerary-summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .itinerary-summary-card {
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+    }
+    .itinerary-summary-label {
+      margin-bottom: 6px;
+      font-size: 0.62rem;
+      letter-spacing: 1.6px;
+    }
+    .itinerary-summary-value {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .itinerary-summary-copy {
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
     .itinerary-route {
       width: 100%;
       justify-content: center;
       white-space: normal;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 0.84rem;
+    }
+    .itinerary-days {
+      gap: 18px;
+    }
+    .day-card {
+      border-radius: 20px;
+    }
+    .day-header {
+      padding-top: 16px;
+      padding-bottom: 14px;
+      gap: 14px;
     }
     .day-header,
     .day-body,
@@ -1751,14 +1909,101 @@ export const styles = `
       padding-right: 16px;
     }
     .day-identity {
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
       width: 100%;
     }
     .day-badge {
-      min-width: 68px;
+      min-width: 56px;
+      padding: 10px 6px 8px;
+      border-radius: 16px;
+    }
+    .day-number {
+      font-size: 1.8rem;
+    }
+    .day-number-label {
+      margin-top: 4px;
+      font-size: 0.56rem;
+      letter-spacing: 1.6px;
+    }
+    .day-heading {
+      padding-top: 2px;
+    }
+    .day-title-row {
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .day-title {
+      font-size: 1.15rem;
+    }
+    .day-stop-count,
+    .day-meta-pill {
+      padding: 5px 9px;
+      font-size: 0.68rem;
+    }
+    .day-places-preview {
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+    .day-meta {
+      gap: 8px;
+    }
+    .day-panel {
+      padding: 14px 14px 10px;
+      border-radius: 16px;
+    }
+    .day-section-title {
+      margin-bottom: 10px;
+      font-size: 0.58rem;
+      letter-spacing: 2.2px;
+    }
+    .time-slot,
+    .transport-item {
+      gap: 10px;
+      padding: 9px 0;
+      margin-bottom: 8px;
+    }
+    .time-dot {
+      width: 9px;
+      height: 9px;
+      margin-top: 6px;
+      box-shadow: 0 0 0 5px rgba(200,135,58,0.1);
+    }
+    .time-text,
+    .transport-text {
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+    .transport-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+    .day-notes {
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+    .history-note-card {
+      padding: 14px 16px;
+      border-radius: 16px;
+    }
+    .history-note-card p {
+      font-size: 0.82rem;
+      line-height: 1.55;
     }
     .itinerary-actions {
       flex-direction: column;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    .itinerary-actions .btn {
+      width: 100%;
     }
     .history-top,
     .history-empty,
@@ -1848,6 +2093,65 @@ export const styles = `
       padding-left: 14px;
       padding-right: 14px;
       font-size: 0.74rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 10px 10px 12px;
+    }
+    .header-logo {
+      justify-self: start;
+    }
+    .header-actions {
+      justify-self: end;
+    }
+    .header-nav {
+      width: 100%;
+    }
+    .header-steps {
+      width: 100%;
+      justify-content: flex-start;
+      padding: 4px;
+      border-radius: 14px;
+    }
+    .hero {
+      padding: 24px 16px 30px;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 10.8vw, 2.7rem);
+    }
+    .hero-subtitle {
+      max-width: 300px;
+      font-size: 0.86rem;
+    }
+    .form-card {
+      margin: 0 12px 44px;
+      padding: 16px 12px 18px;
+      border-radius: 20px;
+    }
+    .form-card::before {
+      height: 3px;
+    }
+    .form-group {
+      padding: 12px;
+      border-radius: 16px;
+    }
+    .form-input {
+      min-height: 48px;
+      font-size: 0.9rem;
+    }
+    .interest-chip-row {
+      gap: 6px;
+    }
+    .interest-chip {
+      font-size: 0.7rem;
+    }
+    .form-arrow {
+      height: 28px;
+      font-size: 0.82rem;
     }
   }
 

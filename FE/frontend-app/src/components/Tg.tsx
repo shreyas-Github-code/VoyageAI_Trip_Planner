@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { clampDays, getCurrentInterestQuery, getMatchingSuggestions, getTransportIcon, parseInterests, replaceInterestQuery } from "../services/utils";
 import type { ItineraryResponse } from "../services/api";
@@ -47,6 +48,7 @@ export const Spinner = ({ text = "Crafting your journey…" }) => (
 // ── Main App ────────────────────────────────────────────────────────────────
 export default function TourGuide() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const [step, setStep] = useState<number>(0); // 0=form, 1=loading, 2=highlights+options, 3=itinerary
 
   const [form, setForm] = useState({ from_location: "", to_location: "", interests: "" });
@@ -242,6 +244,24 @@ export default function TourGuide() {
     }
   };
 
+  const revealProps = (delay = 0, y = 24) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: "easeOut" as const },
+        };
+
+  const cardProps = (delay = 0) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 18, scale: 0.985 },
+          animate: { opacity: 1, y: 0, scale: 1 },
+          transition: { duration: 0.42, delay, ease: "easeOut" as const },
+        };
+
   return (
     <div className={`app ${step === 2 ? "app-selection-mode" : ""}`}>
       {/* Header */}
@@ -276,21 +296,25 @@ export default function TourGuide() {
       <TickerTape />
 
       {/* Error */}
-      {error && <div className="error-toast">⚠ {error}</div>}
+      {error && (
+        <motion.div className="error-toast" {...cardProps(0)}>
+          ⚠ {error}
+        </motion.div>
+      )}
 
       {/* ── Step 0: Form ── */}
       {(step === 0 || step === 1) && (
         <>
-          <div className="hero" ref={heroRef}>
+          <motion.div className="hero" ref={heroRef} {...revealProps(0)}>
             <p className="hero-eyebrow">AI-Powered Travel Planning</p>
             <h1 className="hero-title">Your next great<br /><em>adventure</em> awaits</h1>
             <p className="hero-subtitle">
               Tell us where you're headed and what excites you —
               we'll craft a personalised journey worth remembering.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="form-card card form-card-wrapper">
+          <motion.div className="form-card card form-card-wrapper" {...cardProps(0.08)}>
             <div className="form-card-border" />
             <div className="form-grid">
               <div className="form-group">
@@ -418,7 +442,7 @@ export default function TourGuide() {
                 {step === 1 ? "Exploring…" : "Explore Destinations →"}
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {step === 1 && <Spinner text={loadingMsg} />}
         </>
@@ -427,8 +451,8 @@ export default function TourGuide() {
       {/* ── Step 2: Highlights + Options ── */}
       {step === 2 && options && (
         <>
-          <div className="section section-no-bottom-pad" ref={discoverRef}>
-            <div className="discover-topbar card">
+          <motion.div className="section section-no-bottom-pad" ref={discoverRef} {...revealProps(0)}>
+            <motion.div className="discover-topbar card" {...cardProps(0.04)}>
               <div className="discover-topbar-copy">
                 <span className="discover-topbar-label">Journey lens</span>
                 <div className="route-badge">
@@ -456,24 +480,24 @@ export default function TourGuide() {
                   </button>
                 )}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Two-column layout: Highlights Left + Options Right */}
           <div className="highlights-options-container">
             {/* Left: Highlights */}
             {highlights && (
-              <div className="highlights-column">
+              <motion.div className="highlights-column" {...revealProps(0.08, 20)}>
                 <div className="section-header">
                   <h2 className="section-title">Highlights</h2>
                   <span className="section-subtitle">A curated overview of your journey</span>
                 </div>
-                <div className="card highlights-card">{highlights}</div>
-              </div>
+                <motion.div className="card highlights-card" {...cardProps(0.12)}>{highlights}</motion.div>
+              </motion.div>
             )}
 
             {/* Right: Place Options */}
-            <div className="options-column" ref={selectRef}>
+            <motion.div className="options-column" ref={selectRef} {...revealProps(0.12, 20)}>
               <div className="section-header">
                 <h2 className="section-title">Select Places</h2>
                 <span className="section-subtitle">Tap to add to your itinerary</span>
@@ -497,11 +521,13 @@ export default function TourGuide() {
                         {places.map((place: any) => {
                           const isSel = selected.has(place.name);
                           return (
-                            <div
+                            <motion.div
                               key={place.name}
                               className={`place-card card ${isSel ? "selected" : ""}`}
                               onClick={() => togglePlace(place.name)}
-                              style={{ animationDelay: `${Math.random() * 0.3}s` }}
+                              {...cardProps(0.04)}
+                              whileHover={reduceMotion ? undefined : { y: -4, scale: 1.01 }}
+                              whileTap={reduceMotion ? undefined : { scale: 0.99 }}
                             >
                               <div className="place-check">{isSel ? "✓" : ""}</div>
                               <div className="place-name">{place.name}</div>
@@ -510,7 +536,7 @@ export default function TourGuide() {
                                 {place.category && <span className="place-tag">{place.category}</span>}
                                 {place.estimated_time && <span className="place-time">⏱ {place.estimated_time}</span>}
                               </div>
-                            </div>
+                            </motion.div>
                           );
                         })}
                       </div>
@@ -518,12 +544,12 @@ export default function TourGuide() {
                   );
                 })}
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Sticky selection bar */}
           {selected.size > 0 && (
-            <div className="selection-bar">
+            <motion.div className="selection-bar" {...cardProps(0)}>
               <div className="selection-bar-left">
                 <div className="selection-summary">
                   <div className="selection-count">{selected.size}</div>
@@ -576,15 +602,15 @@ export default function TourGuide() {
                   Generate Itinerary →
                 </button>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {selected.size === 0 && (
-            <div className="selection-bar-empty">
+            <motion.div className="selection-bar-empty" {...cardProps(0)}>
               <span className="selection-bar-empty-text">
                 ← Select places above to build your itinerary →
               </span>
-            </div>
+            </motion.div>
           )}
         </>
       )}
@@ -594,7 +620,7 @@ export default function TourGuide() {
         <div ref={itineraryRef}>
           <section className="section section-itinerary">
             <div className="itinerary-shell">
-              <div className="card itinerary-hero">
+              <motion.div className="card itinerary-hero" {...revealProps(0)}>
                 <div className="itinerary-eyebrow">Ready to explore</div>
                 <div className="itinerary-hero-main">
                   <div>
@@ -631,7 +657,7 @@ export default function TourGuide() {
                     <span className="itinerary-summary-copy">days with planning notes</span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               <div className="section-nav section-nav-compact" role="navigation" aria-label="Itinerary sections">
                 <button type="button" className="section-nav-btn active" onClick={() => scrollToSection(itineraryRef.current)}>
@@ -645,17 +671,17 @@ export default function TourGuide() {
                 </button>
               </div>
 
-              <div className="history-note-card card">
+              <motion.div className="history-note-card card" {...cardProps(0.06)}>
                 <span className="history-note-badge">Local only</span>
                 <p>
                   The latest itinerary is saved only in this browser local storage. It is not stored in the backend or any database.
                 </p>
-              </div>
+              </motion.div>
 
               <div className="itinerary-days" ref={itineraryDaysRef}>
               <span className="section-subtitle">{itinerary.num_days}-day journey · {itinerary.from_location} → {itinerary.to_location}</span>
                 {dayPlans.map((day: any, i: number) => (
-              <div className="day-card card" key={day.day} style={{ animationDelay: `${i * 0.1}s` }}>
+              <motion.div className="day-card card" key={day.day} {...cardProps(i * 0.06)}>
                 <div className="day-header">
                   <div className="day-identity">
                     <div className="day-badge">
@@ -711,7 +737,7 @@ export default function TourGuide() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
               </div>
 

@@ -1,5 +1,7 @@
 # VoyageAI Trip Planner
 
+[Live Demo](https://voyage-ai-trip-planner-puce.vercel.app/)
+
 VoyageAI Trip Planner is a full-stack travel planning app that generates destination highlights, ranked place suggestions, and a day-by-day itinerary using an LLM-backed FastAPI service and a React frontend.
 
 ## What the project does
